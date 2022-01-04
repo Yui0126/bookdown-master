@@ -1,0 +1,157 @@
+# Notes
+
+notes from the book
+
+Reference a figure by its code chunk label with the `fig:` prefix, e.g., see Figure \@ref(fig:nice-fig). Similarly, you can reference tables generated from `knitr::kable()`, e.g., see Table \@ref(tab:nice-tab).
+
+```{r nice-tab, tidy=FALSE}
+knitr::kable(
+  head(iris, 20), caption = 'Here is a nice table!',
+  booktabs = TRUE
+)
+```
+
+
+You can write citations, too. For example, we are using the **bookdown** package [@R-bookdown] in this sample book, which was built on top of R Markdown and **knitr** [@xie2015].
+
+
+## math example
+
+$p$ is unknown but expected to be around 1/3. Standard error will be approximated
+
+$$
+SE = \sqrt(\frac{p(1-p)}{n}) \approx \sqrt{\frac{1/3 (1 - 1/3)} {300}} = 0.027
+$$
+
+You can also use math in footnotes like this^[where we mention $p = \frac{a}{b}$].
+
+We will approximate standard error to 0.027[^longnote]
+
+[^longnote]: $p$ is unknown but expected to be around 1/3. Standard error will be approximated
+
+    $$
+    SE = \sqrt(\frac{p(1-p)}{n}) \approx \sqrt{\frac{1/3 (1 - 1/3)} {300}} = 0.027
+    $$
+
+
+`r if (knitr:::is_html_output()) '
+# References {-}
+'`
+
+
+
+
+```{r}
+# let's see the probability of 4 women getting pregnant among the 20 women who have been assigned morning after pill.
+
+p <- seq(from = 0.1, to = 0.9, by = 0.1)
+prior <- c(rep(0.06, 4), 0.52, rep(0.06, 4))
+likelihood <- dbinom(4, 20, prob = p)
+likelihood_round <- round(likelihood, digits = 4) # rounding the decimal
+prior_tab <- rbind(prior_tab, likelihood_round)
+prior_tab
+
+numerator <- prior*likelihood_round
+denominator <- sum(numerator)
+posterior <- numerator/denominator
+posterior
+
+
+```
+
+
+
+```{r}
+# get credible interval for both mu and y_pred. this line may not run though
+dplyr::select(samples, mu, y_pred) %>%
+  map(quantile, probs=c(0.025, 0.50, 0.975)) # map to get quantile for both 
+```
+
+
+don't really know what the below command does lol
+
+
+```{r, eval=TRUE, echo=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(knitr.table.format = "latex")
+```
+
+
+
+```{r}
+Sys.setenv(lang="en")
+system.time(readLines("https://www.ynharari.com/"))
+
+hilbert <- function(n) {
+  i <- 1:n
+  1/outer(i-1,i,"+")
+}
+
+x <- hilbert(1000)
+system.time(svd(x))
+
+
+```
+
+
+### Some ways to get texts in Box :)
+<div id="hello" class="greeting message" style="color: red;">
+  Hello <strong>world</strong>!
+</div>
+
+<style>
+p.comment {
+background-color: #DBDBDB;
+padding: 10px;
+border: 1px solid black;
+margin-left: 25px;
+border-radius: 5px;
+font-style: italic;
+}
+
+</style>
+
+
+- Bootstrap Alert  
+
+<div class="alert alert-info">
+  <strong>Info!</strong> Indicates a neutral informative change or action.
+</div>
+
+- Custom Paragraphs  
+
+<p class="comment">
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+</p>
+
+
+
+:::: {.blackbox data-latex=""}
+::: {.center data-latex=""}
+**NOTICE!**
+:::
+
+Thank you for noticing this **new notice**! Your noticing it has
+been noted, and _will be reported to the authorities_!
+::::
+
+
+
+<style>
+p.try {
+  background-color: lightgrey;
+  width: 700px;
+  border: 15px solid green;
+  padding: 50px;
+  margin: 20px;
+}
+</style>
+
+
+<p class="try">
+This text is the content of the box. We have added a 50px padding, 20px margin and a 15px green border. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+
+For rounded corner, see below.
+https://www.w3schools.com/css/css3_borders.asp
+
+

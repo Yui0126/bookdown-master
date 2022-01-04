@@ -1,0 +1,192 @@
+---
+title: "Important"
+author: "Yui Naruse"
+date: "2021/6/15"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+### R Programming
+
+#### Functions
+**Anonymous functions**
+Just as the case below, although the function `evaluate` did not have function `sd` defined, we can use it in the function as anonymous function.
+```{r}
+evaluate <- function(func, dat){
+  func(sum(dat))
+  func(median(dat))
+  func(floor(dat))
+}
+
+evaluate(sd, c(4, 8, 0))
+evaluate(function(x){x+1}, 6)
+evaluate(function(x){x[1]}, c(8, 4, 0))
+
+```
+
+**paste**
+```{r}
+telegram <- function(...){
+  paste("START", ..., "STOP")
+}
+```
+
+
+**ellipsis, args, list**
+```{r}
+mad_libs <- function(...){
+  args <- list(...)
+  place <- args[["place"]]
+  adjective <- args[["adjective"]]
+  noun <- args[["noun"]]
+  paste("News from", place, "today where", adjective, "students took to the streets in protest of the new", noun, "being installed on campus.")
+}
+mad_libs(place = "my house", adjective = "boring", noun = "cat")
+```
+
+**binary operators**
+```{r}
+"%p%" <- function(left, right){
+  paste(left, right)
+}
+"I" %p% "Love" %p% "You!"
+```
+
+**Prime numbers**
+```{r}
+isItPrime <- function(n) {
+  n.int <- as.integer(n)
+  if(!(n.int == n)) stop("n is not an integer")
+  if(n < 1) stop("n is not positive")
+  if(n.int == 1) return(FALSE)
+  if(n.int == 2) return(TRUE)
+  lastq <- as.integer(sqrt(n)) + 1L
+  for (q in 2:lastq) {
+    if((n %% q) == 0) return(FALSE)
+  }
+  return(TRUE)
+}
+isItPrime(8)
+
+```
+
+
+**for loop**
+for assignment week 2. 
+This might also be helpful to see how others are subsetting the data
+(https://stackoverflow.com/questions/24154527/warning-message-in-mean-default-argument-is-not-numeric-or-logical-returning-na)
+```{r}
+polmean2 <- function(directory, pollutant, id = 1:332) {
+  files_list <- list.files(directory, full.names = TRUE)
+  dat <- data.frame()
+  for (i in id) {
+    dat <- rbind(dat, read.csv(files_list[i]))
+  }
+  if(pollutant == "sulfate") {
+    pollutant <- dat[,2]
+    return(mean(pollutant, na.rm = TRUE))
+  } else {
+    pollutant <- dat[,3]
+    return(mean(pollutant, na.rm = TRUE))
+  }
+  }
+
+polmean2("specdata", "sulfate", id = 30:70)
+
+## Note that this can be done using dplyr as bellow
+specdata %>%
+  filter(ID %in% 30:70) %>%
+  summarise(mean = mean(sulfate, na.rm = T))
+
+```
+
+**for loop 2**
+for assignment week 2. 
+
+```{r}
+complete4 <- function(directory, id = 1:332) {
+  files_list <- list.files(directory, full.names = TRUE)
+  id_len <- length(id)
+  complete_data <- rep(0, id_len) # somehow had to make a vector of 0s with length of ids
+  j <- 1
+  for (i in id) {
+    dat <- read.csv(files_list[i])
+    complete_data[j] <- sum(complete.cases(dat))
+    j <- j + 1 # when i do not include this line, it gives only one value of specific id
+  }
+  result <- data.frame(id, nods = complete_data)
+  return(result)
+}
+
+complete4("specdata", id = c(5,60,20))
+
+```
+**correlation function**
+
+
+```{r}
+corr1 <- function(directory, threshold = 0) {
+  if(grep("specdata", directory) == 1) {
+    directory <- ("./specdata/")
+  }
+  complete_table <- complete4("specdata", 1:332)
+  nods <- complete_table$nods
+  ids <- complete_table$id[nods > threshold]
+  id_len <- length(ids)
+  corr_vector <- rep(0, id_len)
+  all_files <- as.character(list.files(directory))
+  file_paths <- paste(directory, all_files, sep = "")
+  j <- 1
+  for (i in ids) {
+      current_file <- read.csv(file_paths[i], header = T, sep = ",")
+      corr_vector[j] <- cor(current_file$sulfate, current_file$nitrate, use = "complete.obs")
+      j <- j + 1
+  }
+  result <- corr_vector
+  return(result)
+}
+```
+
+
+**caching data**
+```{r}
+makeCacheMatrix1 <- function(x = matrix()) {
+  m <- NULL
+  set <- function(y) {
+    x <<- y
+    m <<- NULL
+  }
+  get <- function() x
+  setinverse <- function(inverse) m <<- inverse
+  getinverse <- function() m
+  list(set = set, get = get,
+       setinverse = setinverse,
+       getinverse = getinverse)
+}
+```
+
+**getting value from cached data**
+```{r}
+cacheSolve1 <- function(x, ...) {
+  m <- x$getinverse()
+  if(!is.null(m)) {
+    message("getting cached data")
+    return(m)
+  }
+  data <- x$get()
+  m <- solve(data, ...)
+  x$setinverse(m)
+  m
+}
+
+
+mat <- makeCacheMatrix1(x = matrix(c(3,5,7,12,14,16,21,25,29,33,38,62,84,72,98,100),4,4))
+cacheSolve1(mat)
+```
+
+

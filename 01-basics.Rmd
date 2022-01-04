@@ -1,0 +1,133 @@
+# Basics
+
+In this chapter, basic elements needed for using R will be inspected.
+
+
+## Vectors, matrices and lists
+- **Vector**  
+vector can contain only same class of objects
+```{r}
+d <- c(1:5)
+d[d %in% 1:3] <- 0
+d
+```
+
+
+- Sequence `seq`
+```{r}
+1:14 # this can be done also with the `seq` as below
+seq(1, 14) # this gives all the number from 1 to 14
+seq(1, 14, by = 2) # this gives odd numbers within the range of 1 to 14
+seq(2, 14, by = 2) # this gives even numbers within the range of 2 to 14
+k <- seq(from = 100, to = 1000, by = 20)
+str(k)
+```
+
+- Replication `rep`
+```{r}
+x <- rep(c(1:2),5)
+x
+
+```
+
+
+
+- **Vectorized operations**  
+see how the data parallels
+```{r}
+e <- 1:4; f <-6:9
+e + f # 1+6, 2+7...
+e*f # 1*6, 2*7
+```
+
+
+- **Matrix**  
+```{r}
+x <- c(1:9)
+matrix1 <- matrix(data = x, nrow = 3, ncol = 3)
+matrixbyrow <- matrix(data = x, nrow = 3, ncol = 3, byrow = TRUE) # by row
+matrix1
+matrixbyrow
+```
+
+
+```{r}
+int <- 1:16
+matrix2 <- matrix(int, nrow = 4, ncol = 4)
+matrix2[3,3] #the value in 3rd row and 3rd column of the matrix2
+matrix2[3,] # all the values in 3rd row
+matrix2[,3] # all the values in 3rd column
+matrix2[1:3,1:3] # all the values first 3rd rows and 3rd columns
+matrix2[-4, -4] # this gives the same outcome as the one above
+matrix2[c(1,3),] # values in 1st and 3rd rows
+matrix2[,c(1,3)] # values in 1st and 3rd columns
+```
+
+
+- **Matrices multiplication**  
+`;` and `%*%`
+```{r}
+g <- matrix(1:4,2,2); h <- matrix(seq(10,40, by=10),2,2) # four 10s 2 by 2
+g; h
+g*h # 1*10, 2*20, 3*30, 4*40
+g%*%h # (1*10)+(3*20), (2*10)+(4*20), (1*30)+(3*40), (2*30)+(4*40)
+```
+
+- **Lists**  
+store different kinds of class of objects
+```{r}
+a <- c("A","B","C","D","E")
+b <- seq(0, 1, 0.1)
+c <- c(T,F,F,T,T,F,T,T,F)
+
+list <- list(a, b, c)
+list
+list[[2]] # "b"
+list[[2]][1:3] # 1:3 values in "b"
+```
+
+
+- **Names**  
+`paste`
+```{r}
+z <- 1:3
+paste(z, collapse = " ")
+```
+
+ `names`
+```{r}
+names(z) <- c("Y", "U", "I")
+z
+```
+
+`dimnames`
+```{r}
+m <- matrix(1:6,3,2)
+dimnames(m) <- list(c("a","b","c"), c("A","B"))
+m
+```
+
+
+- **Levels**
+```{r}
+fac <- factor(c("1 star", "2 stars", "3 stars", "3 stars", "4 stars", "5 stars"))
+levels(fac) # what values there are in the vector
+nlevels(fac) # how many levels there are
+
+fac[5] # 5th value in the vector (which is 4 stars in this case) 
+fac[2:5] # 2nd to 5th values in the vector
+fac[-1] # except for the 1st value
+```
+
+
+
+- **samples**  
+```{r}
+set.seed(1)
+sample(1:10,4)
+sample(letters,5)
+breakfast <- c("coffee","tea","milk")
+table(sample(breakfast, 50, replace = T, prob = c(0.4,0.4,0.2)))
+```
+
+

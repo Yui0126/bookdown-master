@@ -1,0 +1,46 @@
+# Functions
+
+
+
+## Lexical scoping
+- **using operator `<<-`**  
+which assign a value to an object in global environment
+```{r}
+makeVector <- function(x = numeric()) {
+        m <- NULL # create a space which we can use
+        set <- function(y) {
+                x <<- y # put y into global environment
+                m <<- NULL # makes it possible to clear previous values
+        }
+        get <- function() x
+        setmean <- function(mean) m <<- mean
+        getmean <- function() m
+        list(set = set, get = get,
+             setmean = setmean,
+             getmean = getmean) # makes is possible to retrieve results using $
+}
+```
+
+`cachemean` is needed to complete `makeVector` as follows.
+Note that cachemean() is the only place where the mean() function is executed, which is why makeVector() is incomplete without cachemean().
+```{r}
+cachemean <- function(x, ...) {
+        m <- x$getmean()
+        if(!is.null(m)) {
+                message("getting cached data")
+                return(m) # checks if there is any cached data
+        }
+        data <- x$get() # if not cached, it gets the value
+        m <- mean(data, ...) # and calculate the mean
+        x$setmean(m) # set it
+        m # and return it :)
+}
+```
+
+
+When you run the second line using `cachemean` for the first time, there appears no message, but when you run it for the second time, it says "getting cached data", meaning there is a data already stored.
+```{r}
+myVector <- makeVector(x = 1:15)
+cachemean(myVector) 
+```
+

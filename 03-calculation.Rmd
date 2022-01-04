@@ -1,0 +1,156 @@
+# Basic statistics
+
+
+## `apply` functions
+
+- **apply**  
+function(x, margin, function)
+apply a function over the margins of an array
+```{r}
+x <- matrix(1:45,5,9)
+x
+
+x1 <- matrix(runif(10000),1000)
+str(x1)
+head(x1)
+
+apply(x,1,mean) # mean of each row in matrix x
+apply(x,2,mean) # mean of each column in matrix x
+apply(x,1,quantile,c(0.25,0.75)) # quantile for each row
+
+a <- array(rnorm(2*2*10),c(2,2,10)) # generate 40 random number and put them in 2 rows with 2 columns and the third dimension with 10
+a[,,1] # only the 1st 2by2 from third dimention
+apply(a,c(1,2),sum) # this collapses the third dimension
+
+
+b <- array(1:40, c(2,2,10))
+apply(b, c(1,2), mean) # meaning it adds up all the numbers in the same position of the dimension (sum of all the first column of the first row/10 like -> (1+5+9+13+17+21+25+29+33+37)/10)
+```
+
+- **lapply**  
+loop over a list
+```{r}
+
+x <- list(a = 1:5, b = rnorm(10))
+lapply(x, mean) #gives means for each a and b
+
+x <- 1:4
+lapply(x, runif) # gives 1 to 4 random uniforms (0 to 1)
+lapply(x, runif, min = 0, max = 10) # same but from 0 to 10
+
+x <-list(a = matrix(1:4,2,2), b = matrix(1:6,3,2))
+lapply(x, function(elt) elt[,1]) # using anonymous function (wrote a function "elt" to get the first column of the list x)
+
+```
+
+- **sapply**  
+Results in a simpler way (easier to read than `lapply`)
+```{r}
+x <- list(a = 1:4, b = rnorm(10), c = rnorm(20,1), d = rnorm(100,5))
+sapply(x, mean)
+```
+
+
+- **mapply**  
+multivariate version of lapply
+```{r}
+list(rep(1,4), rep(2,3), rep(3,2), rep(4,1)) # this one is tedious so we can use mapply as follows and get the same result
+mapply(rep, 1:4, 4:1)
+
+noise <- function(n, mean, sd) {
+  rnorm(n, mean, sd)
+}
+
+noise(5,1,2) # get five random numbers with mean 1 and standard deviation 2
+noise(1:5,1:5,2) # this does not work as it doesn't allow vectorized numbers (1:5) so...
+
+# if i want to get one random variable with mean 1 with standard deviation 2, 2 random variables with mean 2 with standard deviation 2, 3 random variables with mean three with standard deviation 2...
+mapply(noise, 1:5, 1:5, 2)
+```
+
+
+- **tapply**  
+applly a function over subsets of a vector
+```{r}
+x <- c(rnorm(10), runif(10), rnorm(10,1))
+f <- gl(3,10) # generate 10 ones, 10 twos, and 10 threes (3 levels 1:3, of each 10). This vector was made to use it in tapply in the next line.
+tapply(x, f, mean) # calculates the mean of; 1:rnorm(10), 2:runif(10), 3:rnorm(10,1)
+tapply(x, f, range)
+```
+
+
+```{r echo=FALSE, results='hide'}
+rich <- data.frame(name = c("Jeff Bezos", "Bernard Arnault", "Elon Musk", "Bill Gates", "Mark Zuckerberg"), 
+                   worth_billion = c(188.3, 188.0, 151.3, 126.5, 118.5), 
+                   age = c(57, 72, 49, 65, 37), 
+                   source = c("Amazon", "LVMH", "Tesla, SpaceX", "Microsoft", "Facebook"),
+                   country = factor(c("United States", "France", "United States", "United States", "United States")))
+
+twomore <- data.frame(name = c("Warren Buffett", "Larry Page"), 
+                      worth_billion = c(109.4, 103.0), 
+                      age = c(90, 48), 
+                      source = c("Berkshire Hathaway", "Google"), 
+                      country = factor(c("United States", "United States")))
+rich <- rbind(rich, twomore) # this adds new rows
+
+education <- factor(c("Princeton University", "Ecole Polytechnique", "University of Pennsylvania", "Harvard University", "Harvard University", "Columbia Business School", "Stanford University"))
+
+rich <- cbind(rich, education) # this combines new column
+```
+
+
+
+```{r}
+tapply(rich$worth_billion, rich$country, mean) # mean of income grouped by country
+tapply(rich$worth_billion, rich$age<50, mean) # mean of income grouped by age (i.e. if age less than 50 TRUE)
+tapply(rich$age, list(rich$country, rich$education), mean, na.rm = TRUE) # mean of the age grouped by two variables (country, education)
+```
+
+- **split**  
+takes a vector or other objects and splits it into groups determined by a factor or list of factors
+```{r}
+x <- c(rnorm(10), runif(10), rnorm(10,1))
+x # everything is combined so difficult to see differences
+f <- gl(3, 10)
+f
+split(x, f) # merge them into a list by group f
+
+lapply(x,mean) # mean for each 30 values (not really mean)...
+lapply(split(x,f), mean) # gives means of each rnorm(10), runif(10), rnorm(10,1).
+
+```
+
+
+a really interesting Example :)
+```{r}
+# get the means for Ozone, Solar and Wind grouped by the value of Month
+s <- split(airquality, airquality$Month)
+lapply(s, function(x) colMeans(x[,c("Ozone","Solar.R","Wind")],na.rm = TRUE))
+
+# it looks simpler with sapply
+sapply(s, function(x) colMeans(x[,c("Ozone","Solar.R","Wind")], 
+                               na.rm = TRUE))
+```
+
+
+```{r}
+x <- rnorm(10)
+f1 <- gl(2,5) # two levels (1,2) each five
+f2 <- gl(5,2) # five levels (1:5) each two
+
+interaction(f1, f2) # combines 1st f1 and first f2, second f1 and second f2...
+str(split(x, list(f1,f2), drop = TRUE)) # some have no value so we can exclude them with 
+
+```
+
+
+
+
+## Law of large numbers (LLM)
+```{r}
+
+means <- cumsum(sample(0:1, 1000, replace = TRUE))/(1:1000)
+plot(means)
+
+```
+

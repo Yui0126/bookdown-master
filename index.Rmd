@@ -1,0 +1,50 @@
+--- 
+title: "A Useful Code Book"
+author: "Yui Naruse"
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+output: bookdown::gitbook
+documentclass: book
+bibliography: [book.bib, packages.bib]
+biblio-style: apalike
+link-citations: yes
+github-repo: rstudio/bookdown-demo
+description: "This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook."
+---
+
+# Introduction
+
+This is a code book written in **Markdown** using `bookdown` package developed by Yihui Xie.
+The guide book can be found [here](https://bookdown.org/yihui/bookdown/).
+
+The motivation behind writing this book is to make it easier to review the contents. Therefore, it will mainly contain basics of the R with minimum explanations of the codes accompanied by some examples. 
+Reference Chapter with \@ref(intro).
+
+Here are some of the `packages` I will be using in this book.
+```{r message=FALSE}
+library(devtools)
+library(dplyr)
+library(ggplot2)
+library(statsr)
+library(shiny)
+library(tidyverse)
+library(vcd)
+library(ggpubr)
+library(knitr)
+library(kableExtra)
+library(GGally)
+library(UsingR)
+library(bookdown)
+Sys.setenv(LANG = "en")
+```
+
+
+```{r include=FALSE}
+# automatically create a bib database for R packages
+knitr::write_bib(c(
+  .packages(), 'bookdown', 'knitr', 'rmarkdown'
+), 'packages.bib')
+```
+
+
+

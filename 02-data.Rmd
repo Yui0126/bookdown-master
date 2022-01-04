@@ -1,0 +1,107 @@
+# Data
+
+
+```{r, echo=FALSE, results='hide', message=FALSE}
+library(bayesrules)
+library(janitor)
+library(tidyverse)
+library(statsr)
+library(knitr)
+```
+
+## Getting data
+- **Reading data from directory**
+```{r}
+hw1_data <- read.csv(file = "C:/Users/ynaru/Desktop/R coursera/Statistics with R/hw1_data.csv",header = T)
+```
+
+
+- **Getting data from URL**  
+You can download a file from Github.
+    - Go to the file you want to download
+    - Click "raw"
+    - Copy the link and use `download.file`
+```{r}
+getwd()
+link <- "https://raw.githubusercontent.com/Yui0126/datasciencectacontent/master/data/covid_GA_CO.csv"
+download.file(link, "covid_data.csv")
+covid <- read.csv(file = "covid_data.csv")
+```
+
+
+
+## Creating data.frame
+`rbind` `cbind`
+```{r}
+rich <- data.frame(name = c("Jeff Bezos", "Bernard Arnault", "Elon Musk", "Bill Gates", "Mark Zuckerberg"), 
+                   worth_billion = c(188.3, 188.0, 151.3, 126.5, 118.5), 
+                   age = c(57, 72, 49, 65, 37), 
+                   source = c("Amazon", "LVMH", "Tesla, SpaceX", "Microsoft", "Facebook"),
+                   country = factor(c("United States", "France", "United States", "United States", "United States")))
+
+twomore <- data.frame(name = c("Warren Buffett", "Larry Page"), 
+                      worth_billion = c(109.4, 103.0), 
+                      age = c(90, 48), 
+                      source = c("Berkshire Hathaway", "Google"), 
+                      country = factor(c("United States", "United States")))
+rich <- rbind(rich, twomore) # this adds new rows
+
+education <- factor(c("Princeton University", "Ecole Polytechnique", "University of Pennsylvania", "Harvard University", "Harvard University", "Columbia Business School", "Stanford University"))
+
+rich <- cbind(rich, education) # this combines new column
+```
+
+bind multiple using `do.call`
+```{r}
+a <- rnorm(10)
+b <- runif(10)
+coin <- c("head","tail")
+c <- sample(coin, size = 10, replace = T, prob = c(0.5,0.5))
+all <- do.call(cbind, list(a,b,c))
+all
+```
+
+
+
+
+## Subsetting data  
+
+
+```{r, results='hide'}
+rich[1:5, "source"] # select 1 to 5th rows of the column name "source"
+rich[3:7, c("age","education")] # select 3 to 7th rows of the column "age" and "education"
+rich[rich$country == "United States", c("name", "worth_billion", "education")] # select people from United States and show values of name, income and education
+rich[rich$country == "United States" & rich$education == "Harvard University",] # select people from United States and also graduated from Harvard University
+rich[rich$country == "France" | rich$age < 60, c("name", "country", "age")] # select people from France OR age under 60 and show name, country and age
+```
+
+
+
+
+`complete.cases`
+```{r}
+b <- c(1,2,NA,4,5,6)
+c <- c("a",NA,NA,"d",NA,"f")
+good <- complete.cases(b,c)
+good #returns TRUE if both b and c has value
+b[good]
+c[good]
+```
+
+
+
+- **counting/excluding NAs, applying ranges**
+`subset`
+```{r}
+table(is.na(hw1_data$Ozone))
+mean(hw1_data$Ozone, na.rm = T)
+
+
+hw1_data2 <- subset(hw1_data, Ozone >31 & Temp > 90)
+
+mean(subset(hw1_data, Month == 6)$Temp)
+max(subset(hw1_data, Month == 5)$Ozone, na.rm = T)
+
+```
+
+
